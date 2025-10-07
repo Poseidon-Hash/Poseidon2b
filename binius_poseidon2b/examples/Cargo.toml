@@ -1,0 +1,105 @@
+[package]
+name = "examples"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+alloy-primitives.workspace = true
+array-util.workspace = true
+binius_circuits = { path = "../crates/circuits", default-features = false }
+binius_core = { path = "../crates/core", default-features = false }
+binius_field = { path = "../crates/field", default-features = false }
+binius_hal = { path = "../crates/hal", default-features = false }
+binius_hash = { path = "../crates/hash", default-features = false }
+binius_m3 = { path = "../crates/m3", default-features = false }
+binius_macros = { path = "../crates/macros", default-features = false }
+binius_math = { path = "../crates/math", default-features = false }
+binius_utils = { path = "../crates/utils", default-features = false }
+bumpalo.workspace = true
+bytesize.workspace = true
+clap = { version = "4.5.20", features = ["derive"] }
+itertools.workspace = true
+rand.workspace = true
+tracing-profile.workspace = true
+tracing.workspace = true
+
+[[example]]
+name = "keccak"
+path = "keccak.rs"
+
+[[example]]
+name = "u8mul"
+path = "u8mul.rs"
+
+[[example]]
+name = "u32add_with_lookup"
+path = "u32add_with_lookup.rs"
+
+[[example]]
+name = "modular_mul"
+path = "modular_mul.rs"
+
+[[example]]
+name = "groestl"
+path = "groestl.rs"
+
+[[example]]
+name = "vision32b_circuit"
+path = "vision32b_circuit.rs"
+
+[[example]]
+name = "sha256_circuit"
+path = "sha256_circuit.rs"
+
+[[example]]
+name = "sha256_circuit_with_lookup"
+path = "sha256_circuit_with_lookup.rs"
+
+[[example]]
+name = "collatz"
+path = "collatz.rs"
+
+[[example]]
+name = "u32_add"
+path = "u32_add.rs"
+
+[[example]]
+name = "u32_mul"
+path = "u32_mul.rs"
+
+[[example]]
+name = "u64_mul"
+path = "u64_mul.rs"
+
+[[example]]
+name = "bitwise_ops"
+path = "bitwise_ops.rs"
+
+[[example]]
+name = "b32_mul"
+path = "b32_mul.rs"
+
+[[example]]
+name = "blake3_circuit"
+path = "blake3_circuit.rs"
+
+[[example]]
+name = "u32_mul_gkr"
+path = "u32_mul_gkr.rs"
+
+[[example]]
+name = "poseidon2b"
+path = "poseidon2b_circuit.rs"
+
+[features]
+default = ["rayon", "nightly_features"]
+bail_panic = ["binius_utils/bail_panic"]
+perfetto = ["tracing-profile/perfetto"]
+rayon = ["binius_utils/rayon"]
+nightly_features = [
+    "binius_core/nightly_features",
+    "binius_hal/nightly_features",
+    "binius_macros/nightly_features",
+]

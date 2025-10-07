@@ -1,0 +1,148 @@
+[workspace]
+members = ["crates/*", "examples"]
+resolver = "2"
+
+[workspace.package]
+version = "0.2.0"
+edition = "2024"
+authors = ["Irreducible Team <opensource@irreducible.com>"]
+
+[workspace.lints.clippy]
+# These are some of clippy's nursery (i.e., experimental) lints that we like.
+# By default, nursery lints are allowed. Some of the lints below have made good
+# suggestions which we fixed. The others didn't have any findings, so we can
+# assume they don't have that many false positives. Let's enable them to
+# prevent future problems.
+borrow_as_ptr = "warn"
+branches_sharing_code = "warn"
+clear_with_drain = "warn"
+cloned_instead_of_copied = "warn"
+collection_is_never_read = "warn"
+dbg_macro = "warn"
+derive_partial_eq_without_eq = "warn"
+empty_line_after_doc_comments = "warn"
+empty_line_after_outer_attr = "warn"
+enum_glob_use = "warn"
+equatable_if_let = "warn"
+explicit_into_iter_loop = "warn"
+explicit_iter_loop = "warn"
+flat_map_option = "warn"
+from_iter_instead_of_collect = "warn"
+if_not_else = "warn"
+if_then_some_else_none = "warn"
+implicit_clone = "warn"
+imprecise_flops = "warn"
+iter_on_empty_collections = "warn"
+iter_on_single_items = "warn"
+iter_with_drain = "warn"
+iter_without_into_iter = "warn"
+large_stack_frames = "warn"
+manual_assert = "warn"
+manual_clamp = "warn"
+manual_is_variant_and = "warn"
+manual_string_new = "warn"
+match_same_arms = "warn"
+missing-const-for-fn = "allow"             # TODO: https://github.com/rust-lang/rust-clippy/issues/14020
+mutex_integer = "warn"
+naive_bytecount = "warn"
+needless_bitwise_bool = "warn"
+needless_continue = "warn"
+needless_for_each = "warn"
+needless_pass_by_ref_mut = "warn"
+nonstandard_macro_braces = "warn"
+option_as_ref_cloned = "warn"
+or_fun_call = "warn"
+path_buf_push_overwrite = "warn"
+read_zero_byte_vec = "warn"
+redundant_clone = "warn"
+redundant_else = "warn"
+single_char_pattern = "warn"
+string_lit_as_bytes = "warn"
+string_lit_chars_any = "warn"
+suboptimal_flops = "warn"
+suspicious_operation_groupings = "warn"
+trailing_empty_array = "warn"
+trait_duplication_in_bounds = "warn"
+transmute_undefined_repr = "warn"
+trivial_regex = "warn"
+tuple_array_conversions = "warn"
+type_repetition_in_bounds = "warn"
+uninhabited_references = "warn"
+unnecessary_self_imports = "warn"
+unnecessary_struct_initialization = "warn"
+unnested_or_patterns = "warn"
+unused_peekable = "warn"
+unused_rounding = "warn"
+use_self = "warn"
+useless_let_if_seq = "warn"
+while_float = "warn"
+zero_sized_map_values = "warn"
+
+[workspace.dependencies]
+anyhow = "1.0.81"
+array-util = "1.0.2"
+assert_matches = "1.5.0"
+alloy-primitives = "0.8.14"
+auto_impl = "1.2.0"
+bumpalo = { version = "3.16.0", features = ["collections"] }
+bytemuck = { version = "1.18.0", features = [
+    "derive",
+    "min_const_generics",
+    "must_cast",
+] }
+bytes = "1.7.2"
+bytesize = "2.0"
+cfg-if = "1.0.0"
+criterion = "0.6"
+derive_more = "0.99.17"
+digest = "0.10.7"
+either = "1.11.0"
+generic-array = "0.14.7"
+getset = "0.1.2"
+groestl_crypto = { package = "groestl", version = "0.10.1" }
+hex-literal = "1.0"
+inventory = "0.3.19"
+itertools = "0.14.0"
+lazy_static = "1.5.0"
+paste = "1.0.15"
+proc-macro2 = "1.0.81"
+proptest = "1.2.0"
+quote = "1.0.36"
+rand = { version = "0.8.5", default-features = false, features = ["std_rng"] }
+rayon = "1.8.0"
+seq-macro = "0.3.5"
+serde = "1.0.219"
+serde_json = "1.0.140"
+serde_json_any_key = "2.0.0"
+sha2 = "0.10.8"
+stackalloc = "1.2.1"
+subtle = "2.5.0"
+syn = { version = "2.0.98", features = ["extra-traits"] }
+thiserror = "2.0.3"
+thread_local = "1.1.7"
+tiny-keccak = { version = "2.0.2", features = ["keccak"] }
+trait-set = "0.3.0"
+tracing = "0.1.38"
+tracing-profile = "0.10.6"
+transpose = "0.2.2"
+
+[profile.release]
+lto = "fat"
+
+[profile.profiling]
+inherits = "release"
+debug = true
+
+[profile.bench]
+inherits = "release"
+debug = true
+
+[profile.test]
+opt-level = 1
+debug = true
+debug-assertions = true
+overflow-checks = true
+lto = "off"
+
+[workspace.metadata.typos]
+default.extend-words = { "typ" = "typ", "Toom" = "Toom" }

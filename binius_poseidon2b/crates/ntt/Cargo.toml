@@ -1,0 +1,35 @@
+[package]
+name = "binius_ntt"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+binius_field = { path = "../field", default-features = false }
+binius_math = { path = "../math", default-features = false }
+binius_maybe_rayon = { path = "../maybe_rayon", default-features = false }
+binius_utils = { path = "../utils", default-features = false }
+bytemuck.workspace = true
+rand.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+assert_matches.workspace = true
+criterion.workspace = true
+lazy_static.workspace = true
+proptest.workspace = true
+
+[lib]
+bench = false
+
+[[bench]]
+name = "additive_ntt"
+harness = false
+
+[[bench]]
+name = "large_transform"
+harness = false

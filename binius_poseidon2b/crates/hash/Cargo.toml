@@ -1,0 +1,39 @@
+[package]
+name = "binius_hash"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+binius_field = { path = "../field", default-features = false }
+binius_maybe_rayon = { path = "../maybe_rayon", default-features = false }
+binius_ntt = { path = "../ntt", default-features = false }
+binius_utils = { path = "../utils", default-features = false }
+bytemuck.workspace = true
+bytes.workspace = true
+cfg-if.workspace = true
+digest.workspace = true
+itertools.workspace = true
+lazy_static.workspace = true
+sha2 = { workspace = true, features = ["compress"] }
+
+[dev-dependencies]
+criterion.workspace = true
+groestl_crypto.workspace = true
+hex-literal.workspace = true
+proptest.workspace = true
+rand = { workspace = true, features = ["std", "std_rng"] }
+
+[features]
+default = ["nightly_features"]
+nightly_features = ["binius_field/nightly_features"]
+
+[lib]
+bench = false
+
+[[bench]]
+name = "hash"
+harness = false

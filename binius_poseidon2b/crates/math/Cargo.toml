@@ -1,0 +1,49 @@
+[package]
+name = "binius_math"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+auto_impl.workspace = true
+binius_field = { path = "../field", default-features = false }
+binius_macros = { path = "../macros", default-features = false }
+binius_maybe_rayon = { path = "../maybe_rayon", default-features = false }
+binius_utils = { path = "../utils", default-features = false }
+bytemuck.workspace = true
+cfg-if.workspace = true
+either.workspace = true
+getset.workspace = true
+itertools.workspace = true
+lazy_static.workspace = true
+rand.workspace = true
+stackalloc.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+trait-set.workspace = true
+
+[dev-dependencies]
+assert_matches.workspace = true
+criterion.workspace = true
+itertools.workspace = true
+proptest.workspace = true
+rand = { workspace = true, features = ["std_rng"] }
+
+[lib]
+bench = false
+
+[[bench]]
+name = "fold"
+harness = false
+
+
+[[bench]]
+name = "tensor_prod_eq_ind"
+harness = false
+
+[features]
+default = ["nightly_features"]
+nightly_features = ["binius_macros/nightly_features"]

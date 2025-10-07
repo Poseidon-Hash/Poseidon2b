@@ -1,0 +1,82 @@
+[package]
+name = "binius_core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+assert_matches.workspace = true
+auto_impl.workspace = true
+binius_macros = { path = "../macros", default-features = false }
+binius_compute = { path = "../compute", default-features = false }
+binius_fast_compute = { path = "../fast_compute", default-features = false }
+binius_field = { path = "../field", default-features = false }
+binius_hal = { path = "../hal", default-features = false }
+binius_hash = { path = "../hash", default-features = false }
+binius_math = { path = "../math", default-features = false }
+binius_ntt = { path = "../ntt", default-features = false }
+binius_maybe_rayon = { path = "../maybe_rayon", default-features = false }
+binius_utils = { path = "../utils", default-features = false }
+bytes.workspace = true
+bytemuck = { workspace = true, features = ["extern_crate_alloc"] }
+digest.workspace = true
+either.workspace = true
+getset.workspace = true
+inventory.workspace = true
+itertools.workspace = true
+rand.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+serde_json_any_key.workspace = true
+stackalloc.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+binius_compute_test_utils = { path = "../compute_test_utils", default-features = false }
+binius_macros = { path = "../macros", default-features = false }
+criterion.workspace = true
+proptest.workspace = true
+rand = { workspace = true, features = ["std"] }
+
+[lib]
+bench = false
+
+[[bench]]
+name = "composition_poly"
+harness = false
+
+[[bench]]
+name = "multilinear_query"
+harness = false
+
+[[bench]]
+name = "prodcheck"
+harness = false
+
+[[bench]]
+name = "binary_merkle_tree"
+harness = false
+
+[[bench]]
+name = "poly_commit"
+harness = false
+
+[[bench]]
+name = "sumcheck"
+harness = false
+
+[features]
+default = ["nightly_features"]
+debug_validate_sumcheck = []
+rayon = ["binius_maybe_rayon/rayon"]
+nightly_features = [
+    "binius_field/nightly_features",
+    "binius_hal/nightly_features",
+    "binius_hash/nightly_features",
+    "binius_macros/nightly_features",
+    "binius_math/nightly_features",
+]
