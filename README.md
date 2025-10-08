@@ -24,6 +24,8 @@ cargo run --release --example poseidon2b -- --n 32 --t 16
 
 The parameters n and t define the field sizes and state sizes and can be combined as defined in the parameter specification. 
 
+Additionally, `--n-permutations` can be used to specify the number of permutations to verify.
+
 The concrete proof implementations for each parameter set can be found in the circuits subfolder [`hades`](binius_poseidon2b/crates/circuits/src/hades/poseidon2b_x7_32_512.rs).
 
 - [`run_benchmark.py`](binius_poseidon2b/scripts/run_benchmark.py) – Benchmark script including the Poseidon2b examples.
