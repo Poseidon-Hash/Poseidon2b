@@ -7,10 +7,17 @@ The project is organized into two main components with distinct licensing origin
 1. **`binius_poseidon2b/` folder** – Based on code from the [Binius project](https://gitlab.com/IrreducibleOSS/binius/), commit [`924103fe50a9767b03c61981a5df12dafc1f44bd`](https://gitlab.com/IrreducibleOSS/binius/-/tree/924103fe50a9767b03c61981a5df12dafc1f44bd). The code has been **adapted and extended** to support the **Poseidon2b** hash function. The original Binius code is licensed under the **Apache License, Version 2.0**, see [`binius_poseidon2b/LICENSE`](binius_poseidon2b/LICENSE) for the full license text.
 
 2. **`sage-ref/` folder** – Contains original SageMath reference implementations and related research code. This code, along with all top-level files not otherwise specified, is released under the **MIT License** (see [LICENSE](LICENSE)).
-   
+
+---
+
 ## Proof implementation in Binius
 
+---
 ## Sage implementations
 
-Python 3.12.5
-Sagemath 10.6
+Contents:
+- [`Poseidon2b.sage`](sage-ref/Poseidon2b.sage) – SageMath reference implementation of the Poseidon2b permutation.  
+- [`Poseidon2b.ipynb`](sage-ref/Poseidon2b.ipynb) – Jupyter notebook demonstrating example usage, including the definition of Poseidon2b instances.  
+- [`AlgebraicModels.ipynb`](sage-ref/AlgebraicModels.ipynb) – SageMath implementations of the algebraic models analyzed in the accompanying paper.
+
+The code and notebooks were developed and tested using `SageMath 10.6` with `Python 3.12.5`. Using the same version is recommended to ensure compatibility.
