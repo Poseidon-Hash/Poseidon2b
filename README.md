@@ -17,7 +17,7 @@ Extensions to the Binius project:
 
 - [`poseidon2b_circuit.rs`](binius_poseidon2b/examples/poseidon2b_circuit.rs) – Poseidon2b circuit implementation.
   
-The instances can be run with: 
+The instances can be run inside the `binius_poseidon2b/` folder with: 
 ```bash
 cargo run --release --example poseidon2b -- --n 32 --t 16
 ```
