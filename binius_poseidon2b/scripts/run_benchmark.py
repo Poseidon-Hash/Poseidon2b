@@ -40,18 +40,18 @@ class BenchmarkConfig:
 # Note: Every benchmark is multi-threaded by default. On top of that it can be run in single-threaded mode.
 #  ┌──── name ───┬────── display ───────┬───────────────────── args ─────────────────────┬─ n_ops ─┬─ single_threaded ─┐
 _RAW_BENCH_ROWS = [
-    ("keccakf_2^13",   "Keccak-f",           ["keccak", "--", "--n-permutations"],                 1 << 13, True),
-    ("sha256",    "SHA-256",            ["sha256_circuit", "--", "--n-compressions"],         1 << 14, True),
-    ("groestl_2^14",   "Grøstl-P",         ["groestl", "--", "--n-permutations"],                1 << 14, True),    
-    ("vision32b_2^14", "Vision Mark-32",     ["vision32b_circuit", "--", "--n-permutations"],      1 << 14, True),
+    ("keccakf_2^13",    "Keccak-f",             ["keccak", "--", "--n-permutations"],                                1 << 13, True),
+    ("sha256",          "SHA-256",              ["sha256_circuit", "--", "--n-compressions"],                        1 << 14, True),
+    ("groestl_2^14",    "Grøstl-P",             ["groestl", "--", "--n-permutations"],                               1 << 14, True),    
+    ("vision32b_2^14",  "Vision Mark-32",       ["vision32b_circuit", "--", "--n-permutations"],                     1 << 14, True),
     
     #Poseidon2b 
-    ("hades_16x32", "Hades 16x32b",     ["hades_x7", "--", "--n", "32","--t","16","--n-permutations"],      1 << 14, True),
-    ("hades_24x32", "Hades 24x32b",     ["hades_x7", "--", "--n", "32","--t","24","--n-permutations"],      1 << 14, True),
-    ("hades_8x64",  "Hades 8x64b",      ["hades_x7", "--", "--n", "64","--t","8","--n-permutations"],      1 << 14, True),
-    ("hades_12x64", "Hades 12x64b",     ["hades_x7", "--", "--n", "64","--t","12","--n-permutations"],      1 << 14, True),
-    ("hades_4x128", "Hades 4x128b",     ["hades_x7", "--", "--n", "128","--t","4","--n-permutations"],      1 << 14, True),
-    ("hades_6x128", "Hades 6x128b",     ["hades_x7", "--", "--n", "128","--t","6","--n-permutations"],      1 << 14, True),
+    ("poseion2b_16x32", "Poseion2b 16x32b",     ["poseidon2b", "--", "--n", "32","--t","16","--n-permutations"],      1 << 14, True),
+    ("poseion2b_24x32", "Poseion2b 24x32b",     ["poseidon2b", "--", "--n", "32","--t","24","--n-permutations"],      1 << 14, True),
+    ("poseion2b_8x64",  "Poseion2b 8x64b",      ["poseidon2b", "--", "--n", "64","--t","8","--n-permutations"],       1 << 14, True),
+    ("poseion2b_12x64", "Poseion2b 12x64b",     ["poseidon2b", "--", "--n", "64","--t","12","--n-permutations"],      1 << 14, True),
+    ("poseion2b_4x128", "Poseion2b 4x128b",     ["poseidon2b", "--", "--n", "128","--t","4","--n-permutations"],      1 << 14, True),
+    ("poseion2b_6x128", "Poseion2b 6x128b",     ["poseidon2b", "--", "--n", "128","--t","6","--n-permutations"],      1 << 14, True),
 
     # ("b32_mul",   "BinaryField32b mul", ["b32_mul", "--", "--n-ops"],                         1 << 20, False),
     # ("u32_add",   "u32 add",            ["u32_add", "--", "--n-additions"],                   1 << 22, False),
