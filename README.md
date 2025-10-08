@@ -9,9 +9,22 @@ The project is organized into two main components with distinct licensing origin
 2. **`sage-ref/` folder** – Contains original SageMath reference implementations and related research code. This code, along with all top-level files not otherwise specified, is released under the **MIT License** (see [LICENSE](LICENSE)).
 
 ---
-
 ## Proof implementation in Binius
 
+- [`poseidon2b_circuit.rs`] (binius_poseidon2b/examples/poseidon2b_circuit.rs) – Poseidon2b circuit implementation.
+  
+The instances can be run with: 
+```bash
+cargo run --release --example poseidon2b -- --n 32 --t 16
+```
+
+The parameters n and t define the field sizes and state sizes and can be combined as defined in the parameter specification. 
+
+The concrete proof implementations for each parameter can be found in /crates/circuits/hades/*.
+
+- [`run_benchmark.py`] (binius_poseidon2b/scripts/run_benchmark.py) – Benchmark script for the examples.
+
+The rust code was developed and tested using `cargo 1.88.0-nightly`.
 ---
 ## Sage implementations
 

@@ -62,7 +62,7 @@ The instances can be run with:
 cargo run --release --example poseidon2b -- --n 32 --t 16
 ```
 
-The parameters n and t define the field sizes and state sizes and can be combined as defined in the paramter specificaton. 
+The parameters n and t define the field sizes and state sizes and can be combined as defined in the parameter specification. 
 
 The concrete proof implementations for each parameter can be found in /crates/circuits/hades/*.
 
