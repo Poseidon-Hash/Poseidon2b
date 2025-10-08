@@ -44,6 +44,7 @@ _RAW_BENCH_ROWS = [
     ("sha256",    "SHA-256",            ["sha256_circuit", "--", "--n-compressions"],         1 << 14, True),
     ("groestl_2^14",   "Grøstl-P",         ["groestl", "--", "--n-permutations"],                1 << 14, True),    
     ("vision32b_2^14", "Vision Mark-32",     ["vision32b_circuit", "--", "--n-permutations"],      1 << 14, True),
+    
     #Poseidon2b 
     ("hades_16x32", "Hades 16x32b",     ["hades_x7", "--", "--n", "32","--t","16","--n-permutations"],      1 << 14, True),
     ("hades_24x32", "Hades 24x32b",     ["hades_x7", "--", "--n", "32","--t","24","--n-permutations"],      1 << 14, True),

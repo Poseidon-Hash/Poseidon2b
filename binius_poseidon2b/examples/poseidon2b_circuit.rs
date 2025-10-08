@@ -1,16 +1,10 @@
 // Copyright 2024-2025 Irreducible Inc.
 
-//! Example of a Binius SNARK that proves execution of [Vision Mark-32] permutations.
-//!
-//! The arithmetization uses committed columns of 32-bit binary tower field elements. Every row of
-//! the trace attests to the validity of 2 Vision rounds. Each permutation consists of 16 rounds.
-//!
-//! [Vision Mark-32]: https://eprint.iacr.org/2024/633
+//! Example of a Binius SNARK that proves execution of Poseidon2b permutations.
 
-// Uses binius_circuits which is being phased out.
 #![allow(deprecated)]
 
-use std::{array, env, path::Path};
+use std::array;
 
 use anyhow::Result;
 use binius_circuits::builder::{ConstraintSystemBuilder, types::U};

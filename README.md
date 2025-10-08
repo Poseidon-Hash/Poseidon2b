@@ -13,7 +13,9 @@ If you redistribute or reuse this code, ensure compliance with both the  **Apach
 ---
 ## Proof implementation in Binius
 
-- [`poseidon2b_circuit.rs`] (binius_poseidon2b/examples/poseidon2b_circuit.rs) – Poseidon2b circuit implementation.
+Extensions to the Binius project: 
+
+- [`poseidon2b_circuit.rs`](binius_poseidon2b/examples/poseidon2b_circuit.rs) – Poseidon2b circuit implementation.
   
 The instances can be run with: 
 ```bash
@@ -22,11 +24,12 @@ cargo run --release --example poseidon2b -- --n 32 --t 16
 
 The parameters n and t define the field sizes and state sizes and can be combined as defined in the parameter specification. 
 
-The concrete proof implementations for each parameter can be found in /crates/circuits/hades/*.
+The concrete proof implementations for each parameter set can be found in the circuits subfolder [`hades`](binius_poseidon2b/crates/circuits/src/hades/poseidon2b_x7_32_512.rs).
 
-- [`run_benchmark.py`] (binius_poseidon2b/scripts/run_benchmark.py) – Benchmark script for the examples.
+- [`run_benchmark.py`](binius_poseidon2b/scripts/run_benchmark.py) – Benchmark script including the Poseidon2b examples.
 
-The rust code was developed and tested using `cargo 1.88.0-nightly`.
+The code was developed and tested using `cargo 1.88.0-nightly` and `Python 3.10.12`.
+
 ---
 ## Sage implementations
 
