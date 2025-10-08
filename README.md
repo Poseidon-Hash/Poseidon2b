@@ -8,6 +8,8 @@ The project is organized into two main components with distinct licensing origin
 
 2. **`sage-ref/` folder** – Contains original SageMath reference implementations and related research code. This code, along with all top-level files not otherwise specified, is released under the **MIT License** (see [LICENSE](LICENSE)).
 
+If you redistribute or reuse this code, ensure compliance with both the  **Apache 2.0** and **MIT** license conditions as they apply to each component.
+
 ---
 ## Proof implementation in Binius
 
