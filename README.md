@@ -10,6 +10,20 @@ The project is organized into two main components with distinct licensing origin
 
 If you redistribute or reuse this code, ensure compliance with both the  **Apache 2.0** and **MIT** license conditions as they apply to each component.
 
+
+### Citing the E-Print version and this repository
+
+```
+@misc{iacr/GrassiKKRSS25-poseidon2b,
+  author       = {Lorenzo Grassi and Dmitry Khovratovich and Katharina Koschatko and Christian Rechberger and Markus Schofnegger and Verena Schr{\"{o}}ppel},
+  title        = {{Poseidon2b}: A Binary Field Version of {Poseidon2}},
+  howpublished = {{IACR} Cryptology ePrint Archive, Paper 2025/058},
+  year         = {2025},
+  url          = {https://eprint.iacr.org/2025/058},
+  note         = {Reference implementations available at https://github.com/Poseidon-Hash/Poseidon2b},
+}
+```
+
 ---
 ## Proof implementation in Binius
 
