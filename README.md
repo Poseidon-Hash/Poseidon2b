@@ -76,6 +76,25 @@ RUSTFLAGS="-C target-cpu=native"
 Contents:
 - [`Poseidon2b.sage`](sage-ref/Poseidon2b.sage) – SageMath reference implementation of the Poseidon2b permutation.  
 - [`Poseidon2b.ipynb`](sage-ref/Poseidon2b.ipynb) – Jupyter notebook demonstrating example usage, including the definition of Poseidon2b instances.  
+
+
 - [`AlgebraicModels.ipynb`](sage-ref/AlgebraicModels.ipynb) – SageMath implementations of the algebraic models analyzed in the accompanying paper.
 
 The code and notebooks were developed and tested using `SageMath 10.6` with `Python 3.12.5`. Using the same version is recommended to ensure compatibility.
+
+
+## Poseidon2b Notes
+- Additive constants, MDS (full/partial), and round counts (`R_f`, `R_p`) are taken directly from `binius_poseidon2b` to match the reference parameters.
+- Partial rounds use the `O(t)` optimized MDS multiplication:
+  - `y_i = (mu_i - 1) * x_i + sum_{j=0}^{t-1} x_j`
+
+
+## Anemoi Notes (binary fields)
+- Parameters: `beta = g`, `gamma = g^{-1}`, `delta = 0`, with `g` the multiplicative generator of the field.
+- S-box on each `(x, y)` pair:
+  1. `x <- x + g * y^alpha + g^{-1}`
+  2. `y <- y + x^(1/alpha)`
+  3. `x <- x + g * y^alpha`
+  - The safety of this S-box shape is not fully certain; the original text suggests using exponents of the form alpha = 2^i + 1 with gcd(i, n) = 1 for security.
+- Estimated algebraic attack cost (FGLM-style):
+  - `C_alg(r) = l * r * 9^(2 * l * r)`, where `t = 2l` is the state size and `r` is the number of rounds.
