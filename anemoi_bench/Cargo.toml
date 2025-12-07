@@ -1,0 +1,7 @@
+[package]
+name = "anemoi_bench"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+binius_field = { path = "../binius_poseidon2b/crates/field" }

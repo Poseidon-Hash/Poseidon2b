@@ -1,0 +1,9 @@
+[package]
+name = "poseidon2b_runner"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# 必须指向您本地的 binius 仓库路径以获取完全相同的塔式域实现
+binius_field = { path = "../binius_poseidon2b/crates/field" }
+rand = "0.8"
