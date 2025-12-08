@@ -134,8 +134,6 @@ fn is_mds<F: FieldOps>(m: &[Vec<F>]) -> bool {
 }
 
 //Search for a circulant MDS matrix, used in the ``large-state'' setting (eprint 2022/840, Appendix~C, $l>4$). 
-//The strategy is to enumerate the coefficients of the first row in lexicographic order, construct the corresponding circulant matrix,
-//and return the first one that satisfies the MDS property.
 
 #[allow(dead_code)]
 fn build_circulant_mds<F: FieldOps + BinaryField>(l: usize) -> Vec<Vec<F>> {
