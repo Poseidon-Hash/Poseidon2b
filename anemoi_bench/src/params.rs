@@ -11,7 +11,7 @@ pub const PI1_128: u128 = 0x28e9_55fd_ff9b_d7e6_df30_73d3_9ac6_c074;
 
 pub const ALPHA_INV_32: u128 = 0x4924_9249;
 pub const ALPHA_INV_64: u128 = 0xdb6d_b6db_6db6_db6d;
-pub const ALPHA_INV_128: u128 = 0x4924_9249_4924_9249_4924_9249_4924_9249;
+pub const ALPHA_INV_128: u128 = 0x4924_9249_2492_4924_9249_2492_4924_9249;
 
 // GF(2^128), l=2 (t=4)
 pub mod params128_l2 {
