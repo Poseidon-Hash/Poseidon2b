@@ -1,4 +1,4 @@
-// Auto-generated from binius_poseidon2b hades constants. Do not edit manually.
+// Generated from binius_poseidon2b hades constants. 
 
 pub mod params32_t16 {
     pub const STATE_SIZE: usize = 16;
