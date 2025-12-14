@@ -1,5 +1,3 @@
-// Generated from binius_poseidon2b hades constants. 
-
 pub mod params32_t16 {
     pub const STATE_SIZE: usize = 16;
     pub const R_F: usize = 8;

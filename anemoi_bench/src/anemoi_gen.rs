@@ -1,6 +1,6 @@
 //Define the functions to generate the parameters of Anemoi: estimate the number of rounds, search for a circulant MDS matrix,
 //derive the round constants from the given $\pi_0/\pi_1$ and $\beta/\delta$, and wrap them into a parameter structure to return.
-//currently all matrices are not circulant and using cauchy matrices.
+//Currently all matrices are not circulant and using cauchy matrices.
 
 use binius_field::BinaryField;
 use std::collections::HashMap;
