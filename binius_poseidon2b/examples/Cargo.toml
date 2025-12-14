@@ -93,6 +93,15 @@ path = "u32_mul_gkr.rs"
 name = "poseidon2b"
 path = "poseidon2b_circuit.rs"
 
+[[example]]
+name = "anemoi_circuit"
+path = "anemoi_circuit.rs"
+
+# Alias to run as `cargo run --example anemoi`
+[[example]]
+name = "anemoi"
+path = "anemoi_circuit.rs"
+
 [features]
 default = ["rayon", "nightly_features"]
 bail_panic = ["binius_utils/bail_panic"]

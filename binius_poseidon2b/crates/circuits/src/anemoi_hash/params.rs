@@ -1,5 +1,5 @@
 //Precomputed Anemoi parameters for benchmark instances.
-//All linear layer matrices are cauchy.
+//All linear layer matrices are cauchy matrices.
 
 
 pub const PI0_32: u32 = 0xb559_eff7;

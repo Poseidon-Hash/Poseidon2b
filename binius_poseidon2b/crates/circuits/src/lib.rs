@@ -27,6 +27,7 @@ pub mod u32fib;
 pub mod unconstrained;
 pub mod vision;
 pub mod hades; 
+pub mod anemoi_hash;
 
 
 #[cfg(test)]
