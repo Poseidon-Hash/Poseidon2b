@@ -75,6 +75,18 @@ fn pow_alpha<F: FieldOps>(x: F) -> F {
 	x.safe_mul(x2).safe_mul(x4) // x^7
 }
 
+fn x7_constraint_expr() -> ArithCircuit<FF> {
+	let x = ArithExpr::Var(0);
+	let x7 = ArithExpr::Var(1);
+
+	let x2 = x.clone() * x.clone();
+	let x4 = x2.clone() * x2.clone();
+	let x6 = x2 * x4;
+	let x7_expr = x6 * x;
+
+	(x7 - x7_expr).into()
+}
+
 pub trait AnemoiField: FieldConst + BinaryField + TowerField + Pod {
 	const ALPHA_INV: u128;
 }
@@ -224,26 +236,6 @@ fn apply_mds_only_plain<F: FieldOps>(x: &mut [F], y: &mut [F], mds: &[Vec<F>]) {
 	y.copy_from_slice(&new_y);
 }
 
-// enforce that output = input^2
-
-fn enforce_square(builder: &mut ConstraintSystemBuilder, name: impl ToString, input: OracleId, output: OracleId) {
-	let expr = (ArithExpr::Var(0) * ArithExpr::Var(0) - ArithExpr::Var(1)).into();
-	builder.assert_zero(name, [input, output], expr);
-}
-
-//enforce that output = left * right
-
-fn enforce_product(
-	builder: &mut ConstraintSystemBuilder,
-	name: impl ToString,
-	left: OracleId,
-	right: OracleId,
-	output: OracleId,
-) {
-	let expr = (ArithExpr::Var(0) * ArithExpr::Var(1) - ArithExpr::Var(2)).into();
-	builder.assert_zero(name, [left, right, output], expr);
-}
-
 //enforce that left == right
 
 fn enforce_eq(builder: &mut ConstraintSystemBuilder, name: impl ToString, left: OracleId, right: OracleId) {
@@ -274,9 +266,6 @@ fn enforce_lin_comb<FBase: FieldConst>(
 
 #[derive(Copy, Clone)]
 struct Pow7Cols {
-	sq: OracleId,
-	quad: OracleId,
-	pow6: OracleId,
 	pow7: OracleId,
 }
 
@@ -288,21 +277,15 @@ fn add_pow7<F: FieldConst>(
 	prefix: &str,
 	input: OracleId,
 ) -> Pow7Cols
-where
-	FF: ExtensionField<F>,
-	F: TowerField,
+	where
+		FF: ExtensionField<F>,
+		F: TowerField,
 {
-	let sq = builder.add_committed(format!("{prefix}_sq"), log_size, F::TOWER_LEVEL);
-	let quad = builder.add_committed(format!("{prefix}_quad"), log_size, F::TOWER_LEVEL);
-	let pow6 = builder.add_committed(format!("{prefix}_pow6"), log_size, F::TOWER_LEVEL);
 	let pow7 = builder.add_committed(format!("{prefix}_pow7"), log_size, F::TOWER_LEVEL);
 
-	enforce_square(builder, format!("{prefix}_sq_check"), input, sq);
-	enforce_square(builder, format!("{prefix}_quad_check"), sq, quad);
-	enforce_product(builder, format!("{prefix}_pow6_check"), quad, sq, pow6);
-	enforce_product(builder, format!("{prefix}_pow7_check"), pow6, input, pow7);
+	builder.assert_zero(format!("{prefix}_pow7_check"), [input, pow7], x7_constraint_expr());
 
-	Pow7Cols { sq, quad, pow6, pow7 }
+	Pow7Cols { pow7 }
 }
 
 struct SboxCols {
@@ -530,70 +513,40 @@ where
 
 		let mut sbox_y_pow: Vec<_> = sboxes
 			.iter()
-			.map(|ids| {
-				(
-					witness.new_column::<F>(ids.y_pow.sq),
-					witness.new_column::<F>(ids.y_pow.quad),
-					witness.new_column::<F>(ids.y_pow.pow6),
-					witness.new_column::<F>(ids.y_pow.pow7),
-				)
-			})
+			.map(|ids| witness.new_column::<F>(ids.y_pow.pow7))
 			.collect();
 		let mut sbox_t: Vec<_> = sboxes.iter().map(|ids| witness.new_column::<F>(ids.t)).collect();
 		let mut sbox_y_out: Vec<_> = sboxes.iter().map(|ids| witness.new_column::<F>(ids.y_out)).collect();
 		let mut sbox_sum: Vec<_> = sboxes.iter().map(|ids| witness.new_column::<F>(ids.sum)).collect();
 		let mut sbox_sum_pow: Vec<_> = sboxes
 			.iter()
-			.map(|ids| {
-				(
-					witness.new_column::<F>(ids.sum_pow.sq),
-					witness.new_column::<F>(ids.sum_pow.quad),
-					witness.new_column::<F>(ids.sum_pow.pow6),
-					witness.new_column::<F>(ids.sum_pow.pow7),
-				)
-			})
+			.map(|ids| witness.new_column::<F>(ids.sum_pow.pow7))
 			.collect();
 		let mut sbox_y_out_pow: Vec<_> = sboxes
 			.iter()
-			.map(|ids| {
-				(
-					witness.new_column::<F>(ids.y_out_pow.sq),
-					witness.new_column::<F>(ids.y_out_pow.quad),
-					witness.new_column::<F>(ids.y_out_pow.pow6),
-					witness.new_column::<F>(ids.y_out_pow.pow7),
-				)
-			})
+			.map(|ids| witness.new_column::<F>(ids.y_out_pow.pow7))
 			.collect();
 		let mut sbox_x_out: Vec<_> = sboxes.iter().map(|ids| witness.new_column::<F>(ids.x_out)).collect();
 
 		for z in 0..rows {
 			for i in 0..l {
 				let y_lin = new_y_cols[i].as_mut_slice::<F>()[z];
-				let (y_sq, y_quad, y_pow6, y_pow7) = fill_pow7_column(y_lin);
+				let (_, _, _, y_pow7) = fill_pow7_column(y_lin);
 				let x_lin = new_x_cols[i].as_mut_slice::<F>()[z];
 				let t_val = x_lin.safe_add(params.beta.safe_mul(y_pow7)).safe_add(params.delta);
 				let inv = pow_const(t_val, params.alpha_inv);
 				let y_out_val = y_lin.safe_add(inv);
 				let sum_val = y_out_val.safe_add(y_lin);
-				let (sum_sq, sum_quad, sum_pow6, sum_pow7) = fill_pow7_column(sum_val);
-				let (y_out_sq, y_out_quad, y_out_pow6, y_out_pow7) = fill_pow7_column(y_out_val);
+				let (_, _, _, sum_pow7) = fill_pow7_column(sum_val);
+				let (_, _, _, y_out_pow7) = fill_pow7_column(y_out_val);
 				let x_out_val = t_val.safe_add(params.beta.safe_mul(y_out_pow7));
 
-				sbox_y_pow[i].0.as_mut_slice::<F>()[z] = y_sq;
-				sbox_y_pow[i].1.as_mut_slice::<F>()[z] = y_quad;
-				sbox_y_pow[i].2.as_mut_slice::<F>()[z] = y_pow6;
-				sbox_y_pow[i].3.as_mut_slice::<F>()[z] = y_pow7;
+				sbox_y_pow[i].as_mut_slice::<F>()[z] = y_pow7;
 				sbox_t[i].as_mut_slice::<F>()[z] = t_val;
 				sbox_y_out[i].as_mut_slice::<F>()[z] = y_out_val;
 				sbox_sum[i].as_mut_slice::<F>()[z] = sum_val;
-				sbox_sum_pow[i].0.as_mut_slice::<F>()[z] = sum_sq;
-				sbox_sum_pow[i].1.as_mut_slice::<F>()[z] = sum_quad;
-				sbox_sum_pow[i].2.as_mut_slice::<F>()[z] = sum_pow6;
-				sbox_sum_pow[i].3.as_mut_slice::<F>()[z] = sum_pow7;
-				sbox_y_out_pow[i].0.as_mut_slice::<F>()[z] = y_out_sq;
-				sbox_y_out_pow[i].1.as_mut_slice::<F>()[z] = y_out_quad;
-				sbox_y_out_pow[i].2.as_mut_slice::<F>()[z] = y_out_pow6;
-				sbox_y_out_pow[i].3.as_mut_slice::<F>()[z] = y_out_pow7;
+				sbox_sum_pow[i].as_mut_slice::<F>()[z] = sum_pow7;
+				sbox_y_out_pow[i].as_mut_slice::<F>()[z] = y_out_pow7;
 				sbox_x_out[i].as_mut_slice::<F>()[z] = x_out_val;
 			}
 		}
