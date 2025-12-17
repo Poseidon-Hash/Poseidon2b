@@ -1,7 +1,8 @@
 mod params;
 
 use binius_field::{
-    BinaryField128b, BinaryField32b, BinaryField64b, Field, PackedField,
+    BinaryField128b, BinaryField32b, BinaryField64b,
+    PackedField, 
 };
 use std::fmt::Debug;
 use std::time::Instant;
@@ -13,7 +14,6 @@ pub trait FieldOps:
     fn add(self, rhs: Self) -> Self;
     fn mul(self, rhs: Self) -> Self;
     fn safe_square(self) -> Self;
-    fn inv(self) -> Self;
     fn from_u8(v: u8) -> Self;
     fn pow_alpha(self) -> Self {
         let x2 = self.safe_square();
@@ -38,8 +38,6 @@ macro_rules! impl_field_ops {
             #[inline(always)]
             fn safe_square(self) -> Self { self.square() }
             #[inline(always)]
-            fn inv(self) -> Self { Field::invert(&self).unwrap() }
-            #[inline(always)]
             fn from_u8(v: u8) -> Self { Self::from(v as $raw) }
         }
         impl FieldConst for $ty {
@@ -55,7 +53,7 @@ impl_field_ops!(BinaryField64b, u64);
 impl_field_ops!(BinaryField128b, u128);
 
 
-// Poseidon2b parameter structure
+// Poseidonb parameter structure
 
 struct PreparedParams<F: FieldConst> {
     t: usize,
@@ -64,38 +62,6 @@ struct PreparedParams<F: FieldConst> {
     rc: Vec<Vec<F>>,
     mds_full: Vec<Vec<F>>,
     mds_partial: Vec<Vec<F>>,
-}
-
-struct MdsFullFast<F: FieldConst> {
-    k: usize,
-    x_plus_one: F,
-}
-
-impl<F: FieldConst> MdsFullFast<F> {
-    fn new(mds_full: &[Vec<F>], t: usize) -> Option<Self> {
-        if t < 8 || t % 4 != 0 {
-            return None;
-        }
-
-        // extract X for C from the ratio of the upper-left block to the upper-right M4
-        // (mds_full[r][c] / mds_full[r][c + 4]);
-
-        let k = t / 4;
-        let mut x = None;
-        'find_x: for r in 0..4 {
-            for c in 0..4 {
-                let m = mds_full[r][c + 4];
-                if m != F::default() {
-                    x = Some(mds_full[r][c].mul(m.inv()));
-                    break 'find_x;
-                }
-            }
-        }
-
-        let x = x?;
-        let x_plus_one = x.add(F::from_u8(1));
-        Some(Self { k, x_plus_one })
-    }
 }
 
 fn prep_params<F: FieldConst, const T: usize, const R: usize>(
@@ -124,7 +90,7 @@ fn prep_params<F: FieldConst, const T: usize, const R: usize>(
     }
 }
 
-// 6 instance parameters (directly reusing tables from binius_poseidon2b/hades)
+// 6 instance parameters (directly reusing tables from binius_poseidonb/hades)
 fn params_32_t16() -> PreparedParams<BinaryField32b> {
     use params::params32_t16 as p;
     prep_params(
@@ -187,21 +153,19 @@ fn params_128_t6() -> PreparedParams<BinaryField128b> {
 }
 
 
-// Poseidon2b Permutation
+// Poseidonb Permutation
 
-struct Poseidon2b<F: FieldConst> {
+struct Poseidonb<F: FieldConst> {
     t: usize,
     rf: usize,
     rp: usize,
     rc: Vec<Vec<F>>,
     mds_full: Vec<Vec<F>>,
     mds_partial: Vec<Vec<F>>,
-    mds_full_fast: Option<MdsFullFast<F>>,
 }
 
-impl<F: FieldConst> Poseidon2b<F> {
+impl<F: FieldConst> Poseidonb<F> {
     fn new(params: PreparedParams<F>) -> Self {
-        let mds_full_fast = MdsFullFast::new(&params.mds_full, params.t);
         Self {
             t: params.t,
             rf: params.rf,
@@ -209,7 +173,6 @@ impl<F: FieldConst> Poseidon2b<F> {
             rc: params.rc,
             mds_full: params.mds_full,
             mds_partial: params.mds_partial,
-            mds_full_fast,
         }
     }
 
@@ -259,9 +222,13 @@ impl<F: FieldConst> Poseidon2b<F> {
     }
 
     fn mul_mds_full(&self, state: &mut [F]) {
+
         // t=4: fast algorithm using the ((A B),(B,A)) structure of M4
+
         if self.t == 4 {
+
             // 2x2 decomposition for M4
+      
             let x0 = state[0];
             let x1 = state[1];
             let x2 = state[2];
@@ -289,78 +256,6 @@ impl<F: FieldConst> Poseidon2b<F> {
             return;
         }
 
-        if self.t == 6 {
-
-            // t=6: naive O(n^2) matrix multiplication
-
-            let mut res = vec![F::default(); self.t];
-            for (r, row) in self.mds_full.iter().enumerate() {
-                let mut acc = F::default();
-                for c in 0..self.t {
-                    acc = acc.add(row[c].mul(state[c]));
-                }
-                res[r] = acc;
-            }
-            state.copy_from_slice(&res);
-            return;
-        }
-
-        if matches!(self.t, 8 | 12 | 16 | 24) {
-
-            // t=8/12/16/24: use a MDS_FULL algorithm expoiting its special structure of C⊗M4
-
-            let fast = self.mds_full_fast.as_ref().expect("mds_full_fast missing");
-            let mut tmp = vec![F::default(); self.t];
-            let mut sum = [F::default(); 4];
-
-            // apply M4 to each 4-element block and accumulate by row
-            // reuse the ((A B),(B,A)) structure of M4
-
-            let a00 = self.mds_full[0][4];
-            let a01 = self.mds_full[0][5];
-            let a10 = self.mds_full[1][4];
-            let a11 = self.mds_full[1][5];
-
-            let b00 = self.mds_full[0][6];
-            let b01 = self.mds_full[0][7];
-            let b10 = self.mds_full[1][6];
-            let b11 = self.mds_full[1][7];
-
-            for block in 0..fast.k {
-                let base = block * 4;
-                let x0 = state[base];
-                let x1 = state[base + 1];
-                let x2 = state[base + 2];
-                let x3 = state[base + 3];
-
-                let y0 = a00.mul(x0).add(a01.mul(x1)).add(b00.mul(x2)).add(b01.mul(x3));
-                let y1 = a10.mul(x0).add(a11.mul(x1)).add(b10.mul(x2)).add(b11.mul(x3));
-                let y2 = b00.mul(x0).add(b01.mul(x1)).add(a00.mul(x2)).add(a01.mul(x3));
-                let y3 = b10.mul(x0).add(b11.mul(x1)).add(a10.mul(x2)).add(a11.mul(x3));
-
-                tmp[base] = y0;
-                tmp[base + 1] = y1;
-                tmp[base + 2] = y2;
-                tmp[base + 3] = y3;
-                sum[0] = sum[0].add(y0);
-                sum[1] = sum[1].add(y1);
-                sum[2] = sum[2].add(y2);
-                sum[3] = sum[3].add(y3);
-            }
-
-            // combine results using C = (X-1)I + J, where J is all-ones matrix
-
-            for block in 0..fast.k {
-                let base = block * 4;
-                for i in 0..4 {
-                    state[base + i] = sum[i].add(tmp[base + i].mul(fast.x_plus_one));
-                }
-            }
-            return;
-        }
-
-        // Other t: naive O(n^2) matrix multiplication
-
         let mut res = vec![F::default(); self.t];
         for (r, row) in self.mds_full.iter().enumerate() {
             let mut acc = F::default();
@@ -373,7 +268,6 @@ impl<F: FieldConst> Poseidon2b<F> {
     }
 
     //$$y_i = (\mu_i - 1)x_i + \sum_{j=0}^{t-1} x_j$$
-    
     fn mul_mds_partial(&self, state: &mut [F]) {
         let mut sum = F::default();
         for &x in state.iter() {
@@ -398,7 +292,7 @@ fn run_poseidon_bench<F: FieldConst>(title: &str, params: PreparedParams<F>) {
         title, params.t, params.rf, params.rp
     );
 
-    let poseidon = Poseidon2b::new(params);
+    let poseidon = Poseidonb::new(params);
 
     let mut state: Vec<F> = (0..poseidon.t)
         .map(|i| F::from_u8((i as u8).wrapping_add(1)))
@@ -425,12 +319,12 @@ fn run_poseidon_bench<F: FieldConst>(title: &str, params: PreparedParams<F>) {
 }
 
 fn main() {
-    println!("=== Poseidon2b Benchmark ===");
+    println!("=== Poseidonb Benchmark ===");
 
-    run_poseidon_bench("GF(2^32) t=16 (Poseidon2b)", params_32_t16());
-    run_poseidon_bench("GF(2^32) t=24 (Poseidon2b)", params_32_t24());
-    run_poseidon_bench("GF(2^64) t=8 (Poseidon2b)", params_64_t8());
-    run_poseidon_bench("GF(2^64) t=12 (Poseidon2b)", params_64_t12());
-    run_poseidon_bench("GF(2^128) t=4 (Poseidon2b)", params_128_t4());
-    run_poseidon_bench("GF(2^128) t=6 (Poseidon2b)", params_128_t6());
+    run_poseidon_bench("GF(2^32) t=16 (Poseidonb)", params_32_t16());
+    run_poseidon_bench("GF(2^32) t=24 (Poseidonb)", params_32_t24());
+    run_poseidon_bench("GF(2^64) t=8 (Poseidonb)", params_64_t8());
+    run_poseidon_bench("GF(2^64) t=12 (Poseidonb)", params_64_t12());
+    run_poseidon_bench("GF(2^128) t=4 (Poseidonb)", params_128_t4());
+    run_poseidon_bench("GF(2^128) t=6 (Poseidonb)", params_128_t6());
 }
