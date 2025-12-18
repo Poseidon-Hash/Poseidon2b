@@ -259,9 +259,9 @@ impl<F: FieldConst> Poseidon2b<F> {
     }
 
     fn mul_mds_full(&self, state: &mut [F]) {
-        // t=4: fast algorithm using the ((A B),(B,A)) structure of M4（12 times muls over GF instead of naive 16 times muls over GF）
+        // t=4: fast algorithm using the ((A B),(B,A)) structure of M4
         if self.t == 4 {
-            // 2x2 decomposition for M4 
+            // 2x2 decomposition for M4
             let x0 = state[0];
             let x1 = state[1];
             let x2 = state[2];
@@ -277,29 +277,10 @@ impl<F: FieldConst> Poseidon2b<F> {
             let b10 = self.mds_full[1][2];
             let b11 = self.mds_full[1][3];
 
-            // 3 block multiplications：
-            // P1 = A * x1, P2 = B * x2, P3 = (A+B)*(x1+x2); y1 = P1+P2, y2 = P3+y1
-            let s0 = x0.add(x2);
-            let s1 = x1.add(x3);
-
-            let p1_0 = a00.mul(x0).add(a01.mul(x1));
-            let p1_1 = a10.mul(x0).add(a11.mul(x1));
-
-            let p2_0 = b00.mul(x2).add(b01.mul(x3));
-            let p2_1 = b10.mul(x2).add(b11.mul(x3));
-
-            let ab00 = a00.add(b00);
-            let ab01 = a01.add(b01);
-            let ab10 = a10.add(b10);
-            let ab11 = a11.add(b11);
-
-            let p3_0 = ab00.mul(s0).add(ab01.mul(s1));
-            let p3_1 = ab10.mul(s0).add(ab11.mul(s1));
-
-            let y0 = p1_0.add(p2_0);
-            let y1 = p1_1.add(p2_1);
-            let y2 = p3_0.add(y0);
-            let y3 = p3_1.add(y1);
+            let y0 = a00.mul(x0).add(a01.mul(x1)).add(b00.mul(x2)).add(b01.mul(x3));
+            let y1 = a10.mul(x0).add(a11.mul(x1)).add(b10.mul(x2)).add(b11.mul(x3));
+            let y2 = b00.mul(x0).add(b01.mul(x1)).add(a00.mul(x2)).add(a01.mul(x3));
+            let y3 = b10.mul(x0).add(b11.mul(x1)).add(a10.mul(x2)).add(a11.mul(x3));
 
             state[0] = y0;
             state[1] = y1;
@@ -352,28 +333,10 @@ impl<F: FieldConst> Poseidon2b<F> {
                 let x2 = state[base + 2];
                 let x3 = state[base + 3];
 
-                // 3 block-mults: P1=A*x1, P2=B*x2, P3=(A+B)*(x1+x2); y1=P1+P2, y2=P3+y1
-                let s0 = x0.add(x2);
-                let s1 = x1.add(x3);
-
-                let p1_0 = a00.mul(x0).add(a01.mul(x1));
-                let p1_1 = a10.mul(x0).add(a11.mul(x1));
-
-                let p2_0 = b00.mul(x2).add(b01.mul(x3));
-                let p2_1 = b10.mul(x2).add(b11.mul(x3));
-
-                let ab00 = a00.add(b00);
-                let ab01 = a01.add(b01);
-                let ab10 = a10.add(b10);
-                let ab11 = a11.add(b11);
-
-                let p3_0 = ab00.mul(s0).add(ab01.mul(s1));
-                let p3_1 = ab10.mul(s0).add(ab11.mul(s1));
-
-                let y0 = p1_0.add(p2_0);
-                let y1 = p1_1.add(p2_1);
-                let y2 = p3_0.add(y0);
-                let y3 = p3_1.add(y1);
+                let y0 = a00.mul(x0).add(a01.mul(x1)).add(b00.mul(x2)).add(b01.mul(x3));
+                let y1 = a10.mul(x0).add(a11.mul(x1)).add(b10.mul(x2)).add(b11.mul(x3));
+                let y2 = b00.mul(x0).add(b01.mul(x1)).add(a00.mul(x2)).add(a01.mul(x3));
+                let y3 = b10.mul(x0).add(b11.mul(x1)).add(a10.mul(x2)).add(a11.mul(x3));
 
                 tmp[base] = y0;
                 tmp[base + 1] = y1;
