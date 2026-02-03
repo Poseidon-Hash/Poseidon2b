@@ -53,6 +53,15 @@ _RAW_BENCH_ROWS = [
     ("poseion2b_4x128", "Poseion2b 4x128b",     ["poseidon2b", "--", "--n", "128","--t","4","--n-permutations"],      1 << 14, True),
     ("poseion2b_6x128", "Poseion2b 6x128b",     ["poseidon2b", "--", "--n", "128","--t","6","--n-permutations"],      1 << 14, True),
 
+    # Poseidonb 
+    ("poseidonb_16x32", "Poseionb 16x32b",     ["poseidonb", "--", "--n", "32","--t","16","--n-permutations"],      1 << 14, True),
+    ("poseidonb_24x32", "Poseionb 24x32b",     ["poseidonb", "--", "--n", "32","--t","24","--n-permutations"],      1 << 14, True),
+    ("poseidonb_8x64",  "Poseionb 8x64b",      ["poseidonb", "--", "--n", "64","--t","8","--n-permutations"],       1 << 14, True),
+    ("poseidonb_12x64", "Poseionb 12x64b",     ["poseidonb", "--", "--n", "64","--t","12","--n-permutations"],      1 << 14, True),
+    ("poseidonb_4x128", "Poseionb 4x128b",     ["poseidonb", "--", "--n", "128","--t","4","--n-permutations"],      1 << 14, True),
+    ("poseidonb_6x128", "Poseionb 6x128b",     ["poseidonb", "--", "--n", "128","--t","6","--n-permutations"],      1 << 14, True),
+
+
     # ("b32_mul",   "BinaryField32b mul", ["b32_mul", "--", "--n-ops"],                         1 << 20, False),
     # ("u32_add",   "u32 add",            ["u32_add", "--", "--n-additions"],                   1 << 22, False),
     # ("u32_mul_gkr","u32 mul gkr",       ["u32_mul_gkr", "--", "--n-muls"],                    1 << 20, True),
